@@ -16,6 +16,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireResearcher", policy => policy.RequireRole("Researcher"));
+    options.AddPolicy("RequireReviewer", policy => policy.RequireRole("Reviewer", "Admin"));
+    options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

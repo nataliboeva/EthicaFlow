@@ -1,0 +1,56 @@
+@model EthicaFlow.Models.EthicsSubmission
+
+@{
+    ViewData["Title"] = "Create Submission";
+}
+
+<h2>Create New Ethics Submission</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Title *</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description/Summary *</label>
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Methodology" class="form-label">Methodology</label>
+                <textarea asp-for="Methodology" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Methodology" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Participants" class="form-label">Participants</label>
+                <textarea asp-for="Participants" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Participants" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Risks" class="form-label">Risks and Mitigation</label>
+                <textarea asp-for="Risks" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Risks" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Create Submission</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

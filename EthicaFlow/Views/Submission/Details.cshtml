@@ -1,0 +1,185 @@
+@model EthicaFlow.Models.EthicsSubmission
+
+@{
+    ViewData["Title"] = "Submission Details";
+}
+
+<h2>Submission Details</h2>
+<hr />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Submission Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Title:</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+
+                    <dt class="col-sm-3">Status:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @GetStatusBadgeClass(Model.Status)">@Model.Status</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Reviewer:</dt>
+                    <dd class="col-sm-9">@(Model.Reviewer?.Name ?? "Not Assigned")</dd>
+
+                    <dt class="col-sm-3">Created Date:</dt>
+                    <dd class="col-sm-9">@Model.CreatedDate.ToString("MM/dd/yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-3">Description:</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+
+                    @if (!string.IsNullOrEmpty(Model.Methodology))
+                    {
+                        <dt class="col-sm-3">Methodology:</dt>
+                        <dd class="col-sm-9">@Model.Methodology</dd>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Participants))
+                    {
+                        <dt class="col-sm-3">Participants:</dt>
+                        <dd class="col-sm-9">@Model.Participants</dd>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Risks))
+                    {
+                        <dt class="col-sm-3">Risks:</dt>
+                        <dd class="col-sm-9">@Model.Risks</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Documents</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Documents.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var doc in Model.Documents)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="@doc.FilePath" target="_blank">@doc.FileName</a>
+                                <span class="text-muted small">@doc.UploadDate.ToString("MM/dd/yyyy")</span>
+                                <form asp-action="DeleteDocument" method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="@doc.DocumentId" />
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this document?');">Delete</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No documents uploaded yet.</p>
+                }
+
+                <hr />
+                <h6>Upload New Document</h6>
+                <form asp-action="UploadDocument" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="submissionId" value="@Model.SubmissionId" />
+                    <div class="input-group">
+                        <input type="file" name="file" class="form-control" required />
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @if (Model.ReviewDecisions.Any())
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Review Decisions</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var decision in Model.ReviewDecisions.OrderByDescending(d => d.DecisionDate))
+                    {
+                        <div class="mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between">
+                                <strong>@decision.Decision</strong>
+                                <span class="text-muted">@decision.DecisionDate.ToString("MM/dd/yyyy HH:mm")</span>
+                            </div>
+                            <div class="mt-2">
+                                <strong>Reviewer:</strong> @decision.Reviewer.Name
+                            </div>
+                            @if (!string.IsNullOrEmpty(decision.Comments))
+                            {
+                                <div class="mt-2">
+                                    <strong>Comments:</strong>
+                                    <p>@decision.Comments</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Status == "Draft")
+                {
+                    <form asp-action="SubmitForReview" method="post">
+                        <input type="hidden" name="id" value="@Model.SubmissionId" />
+                        <button type="submit" class="btn btn-success w-100 mb-2">Submit for Review</button>
+                    </form>
+                }
+                @if (Model.Status == "Draft" || Model.Status == "Revision Required")
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.SubmissionId" class="btn btn-warning w-100 mb-2">Edit Submission</a>
+                }
+                @if (Model.Status == "Revision Required")
+                {
+                    <form asp-action="SubmitForReview" method="post">
+                        <input type="hidden" name="id" value="@Model.SubmissionId" />
+                        <button type="submit" class="btn btn-success w-100 mb-2">Resubmit for Review</button>
+                    </form>
+                }
+                <a asp-action="Index" class="btn btn-secondary w-100">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Draft" => "bg-secondary",
+            "Submitted" => "bg-info",
+            "Under Review" => "bg-primary",
+            "Revision Required" => "bg-warning",
+            "Approved" => "bg-success",
+            "Rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+

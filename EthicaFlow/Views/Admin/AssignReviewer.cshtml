@@ -1,0 +1,93 @@
+@model EthicaFlow.Models.EthicsSubmission
+
+@{
+    ViewData["Title"] = "Assign Reviewer";
+}
+
+<h2>Assign Reviewer</h2>
+<hr />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Submission Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Title:</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+
+                    <dt class="col-sm-3">Researcher:</dt>
+                    <dd class="col-sm-9">@Model.Researcher.Name</dd>
+
+                    <dt class="col-sm-3">Current Reviewer:</dt>
+                    <dd class="col-sm-9">@(Model.Reviewer?.Name ?? "Not Assigned")</dd>
+
+                    <dt class="col-sm-3">Status:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @GetStatusBadgeClass(Model.Status)">@Model.Status</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Select Reviewer</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="AssignReviewer" method="post">
+                    <input type="hidden" name="submissionId" value="@Model.SubmissionId" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Reviewer *</label>
+                        <select name="reviewerId" class="form-select" required>
+                            <option value="">Select a Reviewer</option>
+                            @foreach (var reviewer in ViewBag.Reviewers as List<EthicaFlow.Models.User>)
+                            {
+                                <option value="@reviewer.UserId" selected="@(Model.ReviewerId == reviewer.UserId)">@reviewer.Name (@reviewer.Email)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Assign Reviewer</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Draft" => "bg-secondary",
+            "Submitted" => "bg-info",
+            "Under Review" => "bg-primary",
+            "Revision Required" => "bg-warning",
+            "Approved" => "bg-success",
+            "Rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using EthicaFlow.Models;
 using EthicaFlow.Data;
 
@@ -44,26 +45,51 @@ namespace EthicaFlow.Controllers
 
         public IActionResult SeedUser()
         {
-
-            var existingUser = _context.Users.FirstOrDefault(u => u.Email == "researcher@uni.edu");
-
-            if (existingUser == null)
+            var users = new List<User>
             {
-                var user = new User
+                new User
                 {
                     Name = "Dr. Natali Researcher",
                     Email = "researcher@uni.edu",
                     Password = "123",
                     Role = "Researcher"
-                };
+                },
+                new User
+                {
+                    Name = "Dr. John Reviewer",
+                    Email = "reviewer@uni.edu",
+                    Password = "123",
+                    Role = "Reviewer"
+                },
+                new User
+                {
+                    Name = "Admin User",
+                    Email = "admin@uni.edu",
+                    Password = "123",
+                    Role = "Admin"
+                }
+            };
 
-                _context.Users.Add(user);
-                _context.SaveChanges();
+            var createdUsers = new List<string>();
 
-                return Content("Success! User 'Dr. Natali Researcher' has been created. Password: 123");
+            foreach (var user in users)
+            {
+                var existingUser = _context.Users.FirstOrDefault(u => u.Email == user.Email);
+                if (existingUser == null)
+                {
+                    _context.Users.Add(user);
+                    createdUsers.Add($"{user.Name} ({user.Email}) - Password: 123");
+                }
             }
 
-            return Content("User already exists! You can go log in.");
+            _context.SaveChanges();
+
+            if (createdUsers.Any())
+            {
+                return Content($"Success! Created users:\n{string.Join("\n", createdUsers)}\n\nYou can now log in with any of these accounts.");
+            }
+
+            return Content("All users already exist! You can go log in.");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

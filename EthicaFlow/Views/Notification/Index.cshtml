@@ -1,0 +1,41 @@
+@model IEnumerable<EthicaFlow.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<h2>Notifications</h2>
+<hr />
+
+@if (Model.Any())
+{
+    <div class="list-group">
+        @foreach (var notification in Model)
+        {
+            <div class="list-group-item @(notification.IsRead ? "" : "list-group-item-primary")">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">@notification.Message</h6>
+                    <small>@notification.CreatedDate.ToString("MM/dd/yyyy HH:mm")</small>
+                </div>
+                @if (notification.SubmissionId.HasValue)
+                {
+                    <a asp-controller="Submission" asp-action="Details" asp-route-id="@notification.SubmissionId" class="btn btn-sm btn-link p-0">View Submission</a>
+                }
+                @if (!notification.IsRead)
+                {
+                    <form asp-action="MarkAsRead" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@notification.NotificationId" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as Read</button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <p>No notifications.</p>
+    </div>
+}
+

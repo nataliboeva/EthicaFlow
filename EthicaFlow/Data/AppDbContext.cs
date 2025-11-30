@@ -12,5 +12,17 @@ namespace EthicaFlow.Data
         public DbSet<Document> Documents { get; set; }
         public DbSet<ReviewDecision> ReviewDecisions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure ReviewDecision to avoid multiple cascade paths
+            modelBuilder.Entity<ReviewDecision>()
+                .HasOne(rd => rd.Reviewer)
+                .WithMany()
+                .HasForeignKey(rd => rd.ReviewerId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
