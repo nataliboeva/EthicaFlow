@@ -107,5 +107,3 @@ dotnet ef database update
 
 # 4️⃣ Run the app
 dotnet run
-
-
