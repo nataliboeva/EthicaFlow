@@ -92,18 +92,21 @@ The system focuses on *ethical accountability*, *transparency*, and *smooth appr
 ---
 
 ## *Installation*
-# 1️⃣ Clone the repo
+```
+1️⃣ Clone the repo
 git clone https://github.com/yourusername/EthicsReviewSystem.git
 cd EthicsReviewSystem
 
-# 2️⃣ Configure the database
-# Open appsettings.json and update the connection string:
-# "ConnectionStrings": {
-#   "DefaultConnection": "Server=.;Database=EthicsDB;Trusted_Connection=True;"
-# }
+2️⃣ Configure the database
+Open appsettings.json and update the connection string:
+"ConnectionStrings": {
+  "DefaultConnection": "Server=.;Database=EthicsDB;Trusted_Connection=True;"
+}
 
-# 3️⃣ Apply migrations
+3️⃣ Apply migrations
 dotnet ef database update
 
-# 4️⃣ Run the app
+4️⃣ Run the app
 dotnet run
+```
+
