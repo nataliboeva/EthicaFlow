@@ -1,5 +1,4 @@
 # *Ethics Review Management System*  
-*A lightweight MVC application for managing research ethics submissions, inspired by Infonetica Research Management Software.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Tech Stack](https://img.shields.io/badge/Tech-ASP.NET%20MVC%208-blueviolet)](https://dotnet.microsoft.com/apps/aspnet) [![Build Status](https://img.shields.io/badge/Build-passing-brightgreen)](#)
 
@@ -42,44 +41,6 @@ The system focuses on *ethical accountability*, *transparency*, and *smooth appr
 
 ---
 
-## *Database Schema (Simplified)*
-
-### *Users*
-| Field | Type | Notes |
-|------|------|-------|
-| UserID | int | PK |
-| Name | nvarchar |  |
-| Email | nvarchar | Unique |
-| Role | enum | *Researcher / Reviewer / Admin* |
-
-### *Submissions*
-| Field | Type | Notes |
-|------|------|-------|
-| SubmissionID | int | PK |
-| ResearcherID | FK → Users |
-| Title | nvarchar | |
-| Summary | nvarchar(max) | |
-| Methodology | nvarchar(max) | |
-| Risks | nvarchar(max) | |
-| Status | enum | *Draft/Submitted/Revision Required/Approved* |
-
-### *Documents*
-| Field | Type | Notes |
-|------|------|-------|
-| DocumentID | int | PK |
-| SubmissionID | FK |
-| FilePath | nvarchar | |
-
-### *ReviewDecisions*
-| Field | Type | Notes |
-|------|------|-------|
-| DecisionID | int | PK |
-| SubmissionID | FK |
-| ReviewerID | FK |
-| Decision | enum | *Approve / Request Revisions* |
-| Comments | nvarchar(max) | |
-
----
 
 ## *Technology Stack*
 - *ASP.NET MVC 8*  
